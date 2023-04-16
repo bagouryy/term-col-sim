@@ -49,7 +49,6 @@ int main() {
     g.poseTermite(Coord(1,1), 1);
     g.poseTermite(Coord(1,5), 2);
     g.poseTermite(Coord(15,15), 3);
-    g.poseTermite(Coord(20,20), 4);
     cout << g << endl;
     return 0;
 }

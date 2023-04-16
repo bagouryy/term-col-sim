@@ -1,5 +1,4 @@
 #include "grille.hpp"
-#include "doctest.h"
 
 using namespace std;
 

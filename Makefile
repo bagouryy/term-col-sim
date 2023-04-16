@@ -1,18 +1,22 @@
 CXX=g++
-CXXFLAGS= -Wall -std=c++11
-EXEC_FILES=test
+CXXFLAGS = -Wall -std=c++11
 
-all: test
+all: projet
 
-test: test.o coord.o grille.o
+projet: coord.o grille.o projet.o
 	$(CXX) $(CXXFLAGS) -o $@ $^
-
+test: grille.o coord.o test.o
+	$(CXX) $(CXXFLAGS) -o $@ $^
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 
-test.o: coord.hpp grille.hpp
+test.o: grille.hpp coord.hpp
 coord.o: coord.hpp
 grille.o: grille.hpp coord.hpp
+projet.o: grille.hpp coord.hpp
+
+check: test
+	./test
 
 clean:
-	rm -f *.o $(EXEC_FILES)
+	rm -f projet *.o

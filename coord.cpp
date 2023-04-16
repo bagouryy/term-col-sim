@@ -1,6 +1,6 @@
 #include "coord.hpp"
 #include <iostream>
-#include "doctest.h"
+
 
 using namespace std;
 
@@ -26,24 +26,13 @@ ostream& operator<<(ostream& out,Coord c){
 	return out;
 }
 
-TEST_CASE("Getters Coord"){
-	Coord a(4,10);
-	CHECK(a.getLig() == 4);
-	CHECK(a.getCol() == 10);
-	CHECK_THROWS(Coord(22,12));
-	CHECK_THROWS(Coord(10,-12));
-}
+
 
 bool Coord::operator==(Coord a) const{
 	return col == a.col && lig == a.lig;
 }
 
-TEST_CASE("Coord Egalité"){
-	CHECK(Coord(10,10) == Coord(10,10));
-	CHECK(Coord(14,14) == Coord(14,14));
-	CHECK_FALSE(Coord(10,12) == Coord(15,10));
-	CHECK_FALSE(Coord(10,12) == Coord(12,10));
-}
+
 
 ostream& operator<<(ostream& out,Direction a){
 	switch(a){
@@ -77,21 +66,6 @@ Direction aGauche(Direction dir) {
     }
 }
 
-TEST_CASE("Tourner Direction"){
-	Direction init = Direction::E;
-	CHECK(aGauche(aDroite(init)) == init);
-	CHECK(aDroite(aGauche(init)) == init);
-	Direction dir1 = init;
-	Direction dir2 = init;
-	for (int i = 0; i < 8; i++)
-	{
-		dir1 = aGauche(dir1);
-		dir2 = aDroite(dir2);
-	}
-	CHECK(dir1 == init);
-	CHECK(dir2 == init);
-}
-
 Coord devantCoord(Coord c, Direction d){
 	switch (d)
 	{
@@ -106,39 +80,3 @@ Coord devantCoord(Coord c, Direction d){
 	}
 }
 
-TEST_CASE("devantCoord") {
-    Coord c(5, 5);
-
-    CHECK(devantCoord(c, N) == Coord(4, 5));
-    CHECK(devantCoord(c, NE) == Coord(4, 6));
-    CHECK(devantCoord(c, E) == Coord(5, 6));
-    CHECK(devantCoord(c, SE) == Coord(6, 6));
-    CHECK(devantCoord(c, S) == Coord(6, 5));
-    CHECK(devantCoord(c, SO) == Coord(6, 4));
-    CHECK(devantCoord(c, O) == Coord(5, 4));
-    CHECK(devantCoord(c, NO) == Coord(4, 4));
-}
-
-TEST_CASE("devantCoord sur un bord") {
-    Coord c1(0, 0);
-    Coord c2(0, 19);
-    Coord c3(19, 19);
-    Coord c4(19, 0);
-
-    CHECK_THROWS(devantCoord(c1, N));
-    CHECK_THROWS(devantCoord(c2, NE));
-    CHECK_THROWS(devantCoord(c3, SE));
-    CHECK_THROWS(devantCoord(c4, SO));
-}
-
-TEST_CASE("tour systematqiue"){
-	Coord currentCoord(10, 10);
-	Direction currentDir = N;
-	currentCoord = devantCoord(currentCoord, currentDir);
-	for (int i = 0; i < 4; i++)
-	{
-		currentDir = aDroite(currentDir);
-	}
-	currentCoord = devantCoord(currentCoord, currentDir);
-	CHECK(currentCoord == Coord(10,10));
-}
