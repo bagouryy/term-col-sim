@@ -96,7 +96,20 @@ ostream& operator<<(ostream& os, Grille g){
             } else if (g.contientBrindille(Coord(i,j))) {
                 os << "* ";
             } else {
-                os << "T ";
+				switch (g.dirTermite({i,j}))
+				{
+				case N:case S: os << "| ";
+					break;
+				case O:case E: os << "- ";
+					break;
+				case NO:case SE: os << "\\ ";
+					break;
+				case NE:case SO: os << "/ ";
+					break;
+				
+				default:
+					break;
+				}
             }
         }
         os << "|" << endl;

@@ -73,6 +73,7 @@ int main() {
     
     while(user != '.')
     {
+        cout << "Le nombre d'itérations par passe est " << nbPasse << endl;
         for (int i =0 ; i < nbPasse; i++)
         {
             randTMouv(sim);
@@ -91,7 +92,6 @@ int main() {
             
         }
         user = getchar();
-        cout << "Le nombre d'itérations par passe est " << nbPasse << endl;
     }
     
 
