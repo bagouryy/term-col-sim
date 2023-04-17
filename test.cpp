@@ -109,16 +109,16 @@ TEST_CASE("Grille - contientBrindille()") {
 
 TEST_CASE("Grille - poseTermite()") {
     Grille g;
-    g.poseTermite({1, 1}, 0);
+    g.poseTermite({1, 1}, 0,N);
     CHECK_EQ(g.numéroTermite({1, 1}), 0);
     CHECK_FALSE(g.estVide({1, 1}));
-    CHECK_THROWS(g.poseTermite({1, 1}, 1));
+    CHECK_THROWS(g.poseTermite({1, 1}, 1,N));
 }
 
 
 TEST_CASE("Grille - enleveTermite()") {
     Grille g;
-    g.poseTermite({1, 1}, 0);
+    g.poseTermite({1, 1}, 0,N);
     g.enleveTermite({1, 1});
     CHECK_EQ(g.numéroTermite({1, 1}), -1);
     CHECK(g.estVide({1, 1}));
@@ -129,7 +129,7 @@ TEST_CASE("Grille - enleveTermite()") {
 TEST_CASE("Grille - numéroTermite()") {
     Grille grille;
     CHECK(grille.numéroTermite(Coord(0, 0)) == -1);
-    grille.poseTermite(Coord(0, 0), 1);
+    grille.poseTermite(Coord(0, 0), 1,N);
     CHECK(grille.numéroTermite(Coord(0, 0)) == 1);
     grille.enleveTermite(Coord(0, 0));
     CHECK(grille.numéroTermite(Coord(0, 0)) == -1);
@@ -140,7 +140,7 @@ TEST_CASE("Grille - estVide()") {
     CHECK(g.estVide({1, 1}));
     g.poseBrindille({1, 1});
     CHECK_FALSE(g.estVide({1, 1}));
-    g.poseTermite({0, 0}, 0);
+    g.poseTermite({0, 0}, 0,N);
     CHECK_FALSE(g.estVide({0, 0}));
 }
 
@@ -149,16 +149,16 @@ TEST_CASE("Grille output operator") {
 
     // Add some brindilles and termites to the grid
     grille.poseBrindille(Coord(0, 1));
-    grille.poseTermite(Coord(1, 1), 0);
+    grille.poseTermite(Coord(1, 1), 0,N);
     grille.poseBrindille(Coord(2, 1));
-    grille.poseTermite(Coord(3, 3), 1);
+    grille.poseTermite(Coord(3, 3), 1,N);
 
     // Create a stringstream to capture the output
     stringstream ss;
     ss << grille;
 
     // Check that the output is correct
-    std::string expected_output =
+    string expected_output =
         "  *                                     \n"
         "  T                                     \n"
         "  *                                     \n"

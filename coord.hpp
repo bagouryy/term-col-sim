@@ -28,4 +28,5 @@ Direction aGauche(Direction dir);
 
 Coord devantCoord(Coord c, Direction d);
 
+Direction generateRandomDirection();
 #endif

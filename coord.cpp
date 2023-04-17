@@ -80,3 +80,26 @@ Coord devantCoord(Coord c, Direction d){
 	}
 }
 
+Direction generateRandomDirection() {
+    int randomNum = rand() % 8;
+    switch (randomNum) {
+        case 0:
+            return N;
+        case 1:
+            return NE;
+        case 2:
+            return E;
+        case 3:
+            return SE;
+        case 4:
+            return S;
+        case 5:
+            return SO;
+        case 6:
+            return O;
+        case 7:
+            return NO;
+        default:
+            return N;
+    }
+}
