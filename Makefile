@@ -19,4 +19,4 @@ check: test
 	./test
 
 clean:
-	rm -f projet *.o
+	rm -f projet test *.o

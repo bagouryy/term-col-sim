@@ -9,12 +9,15 @@
 
 using namespace std;
 
-enum EtatTerm {sablier,brindille,tourneSurPlace};
-
 struct Term{
     Direction dir;
     int idT;
-    EtatTerm etat;
+    int sablier;
+	bool brindille = false;
+	bool tourneSurPlace;
+	Term(){
+		idT=-1;
+	}
 };
 
 struct Case{
@@ -23,7 +26,6 @@ struct Case{
 
 	Case(){
 		brindille = false;
-		term.idT = -1;
 	}	
 };
 
@@ -41,6 +43,7 @@ public:
 	Direction dirTermite(Coord c) const;
 	bool estVide(Coord c) const;
     Coord trouveTermite(int idT) const;
+	bool termABrindille(int idT) const;
     
 };
 

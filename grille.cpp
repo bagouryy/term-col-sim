@@ -84,6 +84,11 @@ Coord Grille::trouveTermite(int idT) const{
 	throw runtime_error("Not found");
 }
 
+bool Grille::termABrindille(int idT) const{
+	return grille[trouveTermite(idT).getLig()][trouveTermite(idT).getCol()].term.brindille;
+}
+
+
 ostream& operator<<(ostream& os, Grille g){
     // Print top border
     os << "+" << string(tailleGrille * 2, '-') << "+" << endl;
@@ -98,18 +103,27 @@ ostream& operator<<(ostream& os, Grille g){
             } else {
 				switch (g.dirTermite({i,j}))
 				{
-				case N:case S: os << "| ";
+				case N:case S: os << "|";
 					break;
-				case O:case E: os << "- ";
+				case O:case E: os << "-";
 					break;
-				case NO:case SE: os << "\\ ";
+				case NO:case SE: os << "\\";
 					break;
-				case NE:case SO: os << "/ ";
+				case NE:case SO: os << "/";
 					break;
 				
 				default:
 					break;
 				}
+				if (g.termABrindille(g.numéroTermite({i,j})))
+				{
+					os << "*";
+				}
+				else
+				{
+					os << " ";
+				}
+				
             }
         }
         os << "|" << endl;
