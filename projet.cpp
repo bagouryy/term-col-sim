@@ -1,6 +1,8 @@
 #include "grille.hpp"
 #include "coord.hpp"
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 
 
 using namespace std;
@@ -174,14 +176,13 @@ int main() {
     cout << test.estVide({1,0}) << endl;
     cout << test.estVide({1,1}) << endl;
    */
-
    
     Grille sim;
     vector<Term> termites;
     for (int i = 0; i < 20; i++)
     {
         for (int j = 0; j < 20; j++)
-        {
+        {   
             int r = rand()%100;
             if(r < densiteBrindille*100){
             sim.poseBrindille(Coord(i,j));
@@ -209,7 +210,7 @@ int main() {
     cout << sim << endl;
 
 
-    int nbPasse= 1;
+    int nbPasse= 100;
 
 
     char user = getchar();
