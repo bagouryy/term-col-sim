@@ -12,7 +12,7 @@ using namespace std;
 struct Term{
     Direction dir;
     int idT;
-    int sablier;
+    int sablier =0;
 	bool brindille = false;
 	bool tourneSurPlace;
 	Term(){
@@ -48,7 +48,13 @@ public:
 	Term termID(Coord c) const;
 	void setTermBrindille(Coord c, bool b);
 	void setTermDir(Coord c, Direction d);
+	void setTermSablier(Coord c, int sablier);
+	void setTermTSP(Coord c, bool TSP);
+
 };
 
 ostream& operator<<(ostream& os, Grille g);
+
+ostream& operator<<(ostream& os, vector<Term> t);
+
 #endif

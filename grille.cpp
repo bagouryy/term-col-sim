@@ -27,7 +27,8 @@ void Grille::enleveBrindille(Coord c){
 	Case b;
 	b.brindille = false;
 	b.term.idT = -1;
-	grille[c.getLig()][c.getLig()] = b;
+	grille[c.getLig()][c.getCol()] = b;
+	cout << "enlever" << endl;
 }
 
 bool Grille::contientBrindille(Coord c) const{
@@ -65,6 +66,10 @@ void Grille::deplaceTermite(Coord c){
 	b.brindille = false;
 	Term temp = termID(c);
 	b.term = temp;
+	if(!estVide({devantCoord(c,temp.dir).getLig(),devantCoord(c,temp.dir).getCol()})){
+		throw runtime_error("Case n'est pas vide");
+	}
+
 	grille[devantCoord(c,temp.dir).getLig()][devantCoord(c,temp.dir).getCol()] = b;
 	Case old;
 	old.brindille = false;
@@ -100,7 +105,7 @@ Coord Grille::trouveTermite(int idT) const{
 		}
 		
 	}
-	throw runtime_error("Not found");
+	throw runtime_error("Termite not found");
 }
 
 Term Grille::termID(Coord c) const{
@@ -116,6 +121,18 @@ void Grille::setTermBrindille(Coord c,bool b){
 void Grille::setTermDir(Coord c, Direction d){
 	Term temp = grille[c.getLig()][c.getCol()].term;
 	temp.dir = d;
+	grille[c.getLig()][c.getCol()].term = temp;
+}
+
+void Grille::setTermSablier(Coord c, int sablier){
+	Term temp = grille[c.getLig()][c.getCol()].term;
+	temp.sablier = sablier;
+	grille[c.getLig()][c.getCol()].term = temp;
+}
+
+void Grille::setTermTSP(Coord c, bool TSP){
+	Term temp = grille[c.getLig()][c.getCol()].term;
+	temp.tourneSurPlace = TSP;
 	grille[c.getLig()][c.getCol()].term = temp;
 }
 
@@ -162,4 +179,17 @@ ostream& operator<<(ostream& os, Grille g){
     os << "+" << string(tailleGrille * 2, '-') << "+" << endl;
     
     return os;
+}
+
+ostream& operator<<(ostream& os, vector<Term> t){
+	os << "Informations Termites: " << endl;
+	for (int i = 0; i < t.size(); i++)
+	{
+		os << "Termite Id : " << i << endl;
+		os << "	Termite Direction " << t[i].dir << endl;
+		os << "	Termite à brindille? " << t[i].brindille << endl;
+		os << "	Termite Sablier : " << t[i].sablier << endl;
+		os << "	Termite tourne sur place? " << t[i].tourneSurPlace << endl;	
+		}
+	return os;
 }
