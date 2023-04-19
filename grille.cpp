@@ -50,10 +50,29 @@ void Grille::enleveTermite(Coord c){
 	{
 		throw runtime_error("Pas de termite à enlever");
 	}
+	Case old;
+	old.brindille = false;
+	old.term.idT = -1;
+	grille[c.getLig()][c.getCol()] = old;
+}
+
+void Grille::deplaceTermite(Coord c){
+	if (grille[c.getLig()][c.getCol()].brindille || grille[c.getLig()][c.getCol()].term.idT == -1)
+	{
+		throw runtime_error("Pas de termite à enlever");
+	}
 	Case b;
 	b.brindille = false;
-	b.term.idT = -1;
-	grille[c.getLig()][c.getCol()] = b;
+	Term temp = termID(c);
+	b.term = temp;
+	grille[devantCoord(c,temp.dir).getLig()][devantCoord(c,temp.dir).getCol()] = b;
+	Case old;
+	old.brindille = false;
+	Term oT;
+	oT.idT = -1;
+	oT.brindille =false;
+	old.term = oT;
+	grille[c.getLig()][c.getCol()] = old;
 }
 
 int Grille::numéroTermite(Coord c) const{
@@ -65,7 +84,7 @@ Direction Grille::dirTermite(Coord c) const{
 }
 
 bool Grille::estVide(Coord c) const{
-	return !grille[c.getLig()][c.getCol()].brindille && grille[c.getLig()][c.getCol()].term.idT == -1;
+	return !grille[c.getLig()][c.getCol()].brindille && (grille[c.getLig()][c.getCol()].term.idT == -1);
 }
 
 Coord Grille::trouveTermite(int idT) const{
@@ -84,10 +103,21 @@ Coord Grille::trouveTermite(int idT) const{
 	throw runtime_error("Not found");
 }
 
-bool Grille::termABrindille(int idT) const{
-	return grille[trouveTermite(idT).getLig()][trouveTermite(idT).getCol()].term.brindille;
+Term Grille::termID(Coord c) const{
+	return grille[c.getLig()][c.getCol()].term;
 }
 
+void Grille::setTermBrindille(Coord c,bool b){
+	Term temp = grille[c.getLig()][c.getCol()].term;
+	temp.brindille = b;
+	grille[c.getLig()][c.getCol()].term = temp;
+}
+
+void Grille::setTermDir(Coord c, Direction d){
+	Term temp = grille[c.getLig()][c.getCol()].term;
+	temp.dir = d;
+	grille[c.getLig()][c.getCol()].term = temp;
+}
 
 ostream& operator<<(ostream& os, Grille g){
     // Print top border
@@ -97,9 +127,9 @@ ostream& operator<<(ostream& os, Grille g){
         os << "|";
         for (int j = 0; j < tailleGrille; j++) {
             if (g.estVide(Coord(i,j))) {
-                os << "  ";
+                os << " ";
             } else if (g.contientBrindille(Coord(i,j))) {
-                os << "* ";
+                os << "*";
             } else {
 				switch (g.dirTermite({i,j}))
 				{
@@ -115,7 +145,8 @@ ostream& operator<<(ostream& os, Grille g){
 				default:
 					break;
 				}
-				if (g.termABrindille(g.numéroTermite({i,j})))
+            }
+				if (g.termID({i,j}).brindille)
 				{
 					os << "*";
 				}
@@ -124,12 +155,10 @@ ostream& operator<<(ostream& os, Grille g){
 					os << " ";
 				}
 				
-            }
         }
         os << "|" << endl;
     }
 
-    // Print bottom border
     os << "+" << string(tailleGrille * 2, '-') << "+" << endl;
     
     return os;

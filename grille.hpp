@@ -26,7 +26,8 @@ struct Case{
 
 	Case(){
 		brindille = false;
-	}	
+		term.idT = -1;
+	};	
 };
 
 class Grille{
@@ -36,6 +37,7 @@ public:
     Grille();
 	void poseBrindille(Coord c);
 	void enleveBrindille(Coord c);
+	void deplaceTermite(Coord old);
 	bool contientBrindille(Coord c) const;
 	void poseTermite(Coord c, int idT, Direction dir);
 	void enleveTermite(Coord c);
@@ -43,8 +45,9 @@ public:
 	Direction dirTermite(Coord c) const;
 	bool estVide(Coord c) const;
     Coord trouveTermite(int idT) const;
-	bool termABrindille(int idT) const;
-    
+	Term termID(Coord c) const;
+	void setTermBrindille(Coord c, bool b);
+	void setTermDir(Coord c, Direction d);
 };
 
 ostream& operator<<(ostream& os, Grille g);

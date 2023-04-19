@@ -8,39 +8,35 @@ using namespace std;
 const float probaTourner = 0.1;
 const int dureeSablier = 6;
 const float densiteBrindille=0.05;
-const int nbTermites=20;
+const int nbTermites=1;
 
 void randTMouv(Grille &g, vector<Term> &term){
     for (int i = 0; i < nbTermites; i++)
     {
-        Coord temp = g.trouveTermite(i);
-        Direction t = g.dirTermite(temp);
-        int ra = rand()%10 +1;
+        Coord oldC = g.trouveTermite(i);
+        Direction t = term[i].dir;
         term[i].tourneSurPlace = false;
-        if (ra <=probaTourner*10){
+        if ((rand()%10 +1) <=probaTourner*10){
             t = generateRandomDirection();
         }
         try
         {
-            Coord nouv = devantCoord(temp,t);
+            Coord nouv = devantCoord(oldC,t);
             if(g.estVide(nouv)){
-            g.enleveTermite(temp);
-            g.poseTermite(nouv,i,t);
-            term[i].sablier--;
             term[i].dir = t;
+            g.deplaceTermite(oldC);
+            term[i].sablier--;
         }else{
-            g.enleveTermite(temp);
             Direction d = generateRandomDirection();
-            g.poseTermite(temp,i,d);
+            g.setTermDir(oldC,d);
             term[i].tourneSurPlace = true;
             term[i].dir = d;
         }
         }
         catch(runtime_error)
         {
-            g.enleveTermite(temp);
             Direction d = generateRandomDirection();
-            g.poseTermite(temp,i,d);
+            g.setTermDir(oldC,d);
             term[i].tourneSurPlace = true;
             term[i].dir = d;
         }
@@ -51,8 +47,9 @@ void randTMouv(Grille &g, vector<Term> &term){
 
 void chargerBrindille(Grille &g, Term &term){
     try{
-        term.brindille = true; 
         g.enleveBrindille(devantCoord(g.trouveTermite(term.idT),term.dir));
+        term.brindille = true;
+        g.setTermBrindille(g.trouveTermite(term.idT), true);
         term.sablier = dureeSablier; 
     }catch(runtime_error){};
 }
@@ -61,6 +58,7 @@ void dechargerBrindille(Grille &g, Term &term){
     if(term.brindille && term.sablier <=0){
         term.brindille = false;
         g.poseBrindille(devantCoord(g.trouveTermite(term.idT),term.dir));
+        g.setTermBrindille(g.trouveTermite(term.idT), false);
         term.sablier = dureeSablier;
     }
     }catch(runtime_error){};
@@ -95,6 +93,24 @@ void rassemblerBrindille(Grille &g,vector<Term> &termites){
 }
 
 int main() {
+    /*
+    Grille test;
+    vector<Term> termites;
+    test.poseBrindille({0,0});
+    test.poseTermite({1,0},0,N);
+    Term temp;
+    temp.idT = 0;
+    temp.dir = N;
+    temp.sablier =0;
+    termites.push_back(temp);
+    cout << test << endl;
+    chargerBrindille(test,temp);
+    cout << test << endl;
+    temp.sablier = 0;
+    dechargerBrindille(test,temp);
+    cout << test << endl;
+
+    */
     Grille sim;
     vector<Term> termites;
     for (int i = 0; i < 20; i++)
@@ -126,7 +142,8 @@ int main() {
     }
     cout << sim << endl;
 
-    int nbPasse= 1;
+
+    int nbPasse= 1000;
 
 
     char user = getchar();
@@ -137,7 +154,7 @@ int main() {
         for (int i =0 ; i < nbPasse; i++)
         {   
             randTMouv(sim,termites);
-            rassemblerBrindille(sim,termites);
+            //rassemblerBrindille(sim,termites);
         }
         cout << sim << endl;
         if (user == '*')
@@ -154,7 +171,7 @@ int main() {
         }
         user = getchar();
     }
-    
+
 
     return 0;
 }
