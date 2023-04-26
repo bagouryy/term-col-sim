@@ -10,7 +10,7 @@ using namespace std;
 const float probaTourner = 0.1;
 const int dureeSablier = 6;
 const float densiteBrindille=0.10;
-const int nbTermites=10;
+const int nbTermites=20;
 
 void randTMouv(Grille &g, vector<Term> &term){
     for (int i = 0; i < nbTermites; i++)
@@ -75,7 +75,7 @@ void dechargerBrindille(Grille &g, Term &term){
     }catch(runtime_error){};
 }
 
-void testAlgo(Grille &g, vector<Term> &term){
+void rassemblerBrindille(Grille &g, vector<Term> &term){
     for (int i = 0; i < nbTermites; i++)
     {   
         Coord oldC = g.trouveTermite(i);
@@ -102,10 +102,18 @@ void testAlgo(Grille &g, vector<Term> &term){
                     g.setTermTSP(oldC,true);
                     term[i].tourneSurPlace = true;
                 }else if(term[i].sablier <=0 && g.contientBrindille(nouv) && term[i].brindille){
-                    Direction gauche = aGauche(term[i].dir);
-                    term[i].dir = gauche;
-                    g.setTermDir(oldC,gauche);
-                    dechargerBrindille(g,term[i]);
+                        Direction first = term[i].dir;
+                    while(term[i].brindille){
+                        Direction gauche = aGauche(term[i].dir);
+                        term[i].dir = gauche;
+                        if (!(term[i].dir == opposer(first))){
+                            g.setTermDir(oldC,gauche);
+                            dechargerBrindille(g,term[i]);
+                        }else{
+                            g.setTermDir(oldC,opposer(first));
+                            g.deplaceTermite(oldC);
+                        }
+                    }
                 }else if(term[i].sablier <=0 && g.contientBrindille(nouv) && !term[i].brindille){
                    chargerBrindille(g,term[i]);
                 }
@@ -125,57 +133,65 @@ void testAlgo(Grille &g, vector<Term> &term){
 
 
 
-void rassemblerBrindille(Grille &g,vector<Term> &termites){
-    for (int i = 0; i < nbTermites; i++)
-    {   
-        Term &term= termites[i];
-        Coord cT = g.trouveTermite(i);
-        Direction dT = g.dirTermite(cT);
-        try{
-        Coord dC = devantCoord(cT,dT);
-        if(g.contientBrindille(dC)){
-            if (term.sablier <= 0)
-            {
-                if (!term.brindille)
-                {
-                    chargerBrindille(g,term);
-                    g.enleveBrindille(dC);
-                }else
-                {
-                    term.dir = aGauche(term.dir);
-                    g.setTermDir(cT,term.dir);
-                    dechargerBrindille(g,term);
-                }
+// void rassemblerBrindille(Grille &g,vector<Term> &termites){
+//     for (int i = 0; i < nbTermites; i++)
+//     {   
+//         Term &term= termites[i];
+//         Coord cT = g.trouveTermite(i);
+//         Direction dT = g.dirTermite(cT);
+//         try{
+//         Coord dC = devantCoord(cT,dT);
+//         if(g.contientBrindille(dC)){
+//             if (term.sablier <= 0)
+//             {
+//                 if (!term.brindille)
+//                 {
+//                     chargerBrindille(g,term);
+//                     g.enleveBrindille(dC);
+//                 }else
+//                 {
+//                     term.dir = aGauche(term.dir);
+//                     g.setTermDir(cT,term.dir);
+//                     dechargerBrindille(g,term);
+//                 }
                 
-            }
+//             }
             
-        }
-        }catch(runtime_error){};
-    }
+//         }
+//         }catch(runtime_error){};
+//     }
     
-}
+// }
 
 int main() {
-    /*
-    Grille test;
-    vector<Term> termites;
-    test.poseBrindille({0,0});
-    test.poseTermite({1,0},0,N);
-    Term temp;
-    temp.idT = 0;
-    temp.dir = N;
-    temp.sablier =0;
-    termites.push_back(temp);
-    cout << test << endl;
-    chargerBrindille(test,temp);
-    cout << test << endl;
-    temp.sablier = 0;
-    dechargerBrindille(test,temp);
-    cout << test << endl;
-    cout << test.estVide({0,0}) << endl;
-    cout << test.estVide({1,0}) << endl;
-    cout << test.estVide({1,1}) << endl;
-   */
+    srand(time(nullptr));  
+    
+    // Grille test;
+    // vector<Term> termites;
+    // test.poseBrindille({0,0});
+    // test.poseBrindille({0,1});
+    // test.poseBrindille({1,0});
+    // test.poseBrindille({2,0});
+    // test.poseBrindille({0,2});
+    // test.poseBrindille({1,2});
+    // test.poseBrindille({3,0});
+    // test.poseTermite({2,1},0,N);
+    // Term temp;
+    // temp.idT = 0;
+    // temp.dir = N;
+    // temp.sablier =0;
+    // temp.brindille = true;
+    // test.setTermBrindille({2,1},true);
+    // termites.push_back(temp);
+    // cout << test << endl;
+    // chargerBrindille(test,temp);
+    // cout << test << endl;
+    // temp.sablier = 0;
+    // dechargerBrindille(test,temp);
+    // cout << test << endl;
+    // cout << test.estVide({0,0}) << endl;
+    // cout << test.estVide({1,0}) << endl;
+    // cout << test.estVide({1,1}) << endl;
    
     Grille sim;
     vector<Term> termites;
@@ -206,11 +222,13 @@ int main() {
         termites.push_back(temp);
         sim.poseTermite({x,y},i,temp.dir);
     }
-    cout << termites << endl;
+
+
+    // cout << termites << endl;
     cout << sim << endl;
+    
 
-
-    int nbPasse= 100;
+    int nbPasse= 1;
 
 
     char user = getchar();
@@ -220,25 +238,25 @@ int main() {
         cout << "Le nombre d'itérations par passe est " << nbPasse << endl;
         for (int i =0 ; i < nbPasse; i++)
         {   
-            randTMouv(sim,termites);
+            // randTMouv(sim,termites);
             rassemblerBrindille(sim,termites);
             // testAlgo(sim,termites);
         }
-        cout << termites << endl;
+        // cout << termites << endl;
         cout << sim << endl;
-        cout << "Coordonnees des brindilles: " << endl; 
+    //     cout << "Coordonnees des brindilles: " << endl; 
 
-        for (int i = 0; i < 20; i++)
-    {
-        for (int j = 0; j < 20; j++)
-        {   
-            if(sim.contientBrindille({i,j})){
-                cout << "   {" << i << "," << j << "}" << " , ";
-            }
-        }
+    //     for (int i = 0; i < 20; i++)
+    // {
+    //     for (int j = 0; j < 20; j++)
+    //     {   
+    //         if(sim.contientBrindille({i,j})){
+    //             cout << "   {" << i << "," << j << "}" << " , ";
+    //         }
+    //     }
         
-    }   
-    cout << endl;
+    // }   
+    // cout << endl;
 
 
         if (user == '*')
@@ -252,6 +270,14 @@ int main() {
                 nbPasse =1;
             }
             
+        }else if(user == '1'){
+            nbPasse = 1;
+        }else if(user == '2'){
+            nbPasse = 10;
+        }else if(user == '3'){
+            nbPasse = 100;
+        }else if (user == '4'){
+            nbPasse = 1000;
         }
         user = getchar();
     }

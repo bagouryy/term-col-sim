@@ -28,7 +28,6 @@ void Grille::enleveBrindille(Coord c){
 	b.brindille = false;
 	b.term.idT = -1;
 	grille[c.getLig()][c.getCol()] = b;
-	cout << "enlever" << endl;
 }
 
 bool Grille::contientBrindille(Coord c) const{

@@ -66,6 +66,21 @@ Direction aGauche(Direction dir) {
     }
 }
 
+Direction opposer(Direction dir){
+    switch (dir) {
+        case N: return S;
+        case NE: return SO;
+        case E: return O;
+        case SE: return NO;
+        case S: return N;
+        case SO: return NE;
+        case O: return E;
+        case NO: return SE;
+        default: return N;
+    }
+}
+
+
 Coord devantCoord(Coord c, Direction d){
 	switch (d)
 	{

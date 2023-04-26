@@ -25,6 +25,7 @@ ostream& operator<<(ostream& out, Direction a);
 
 Direction aDroite(Direction dir);
 Direction aGauche(Direction dir);
+Direction opposer(Direction dir);
 
 Coord devantCoord(Coord c, Direction d);
 
