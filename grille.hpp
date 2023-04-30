@@ -37,19 +37,20 @@ public:
     Grille();
 	void poseBrindille(Coord c);
 	void enleveBrindille(Coord c);
-	void deplaceTermite(Coord old);
-	bool contientBrindille(Coord c) const;
 	void poseTermite(Coord c, int idT, Direction dir);
 	void enleveTermite(Coord c);
+	void deplaceTermite(Coord old);
+	void setTermBrindille(Coord c, bool b);
+	void setTermDir(Coord c, Direction d);
+	void setTermTSP(Coord c, bool TSP);
+	void setTermSablier(Coord c, int sablier);
+	bool contientBrindille(Coord c) const;
 	int numéroTermite(Coord c) const;
 	Direction dirTermite(Coord c) const;
 	bool estVide(Coord c) const;
     Coord trouveTermite(int idT) const;
 	Term termID(Coord c) const;
-	void setTermBrindille(Coord c, bool b);
-	void setTermDir(Coord c, Direction d);
-	void setTermSablier(Coord c, int sablier);
-	void setTermTSP(Coord c, bool TSP);
+	int voisinsLibre(Coord c) const;
 
 };
 

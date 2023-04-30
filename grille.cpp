@@ -2,6 +2,7 @@
 
 using namespace std;
 
+
 Grille::Grille(){
 	for (int i = 0; i < tailleGrille; ++i) {
         for (int j = 0; j < tailleGrille; ++j) {
@@ -133,6 +134,19 @@ void Grille::setTermTSP(Coord c, bool TSP){
 	Term temp = grille[c.getLig()][c.getCol()].term;
 	temp.tourneSurPlace = TSP;
 	grille[c.getLig()][c.getCol()].term = temp;
+}
+
+int Grille::voisinsLibre(Coord c) const{
+	int res =0;
+	for (int i = 0; i < 8; i++)
+	{
+		try{
+		if (estVide(devantCoord(c,Direction(i)))){
+			res++;
+		}
+		}catch(runtime_error){}
+	}
+	return res;
 }
 
 ostream& operator<<(ostream& os, Grille g){
