@@ -1,12 +1,15 @@
 CXX=g++
-CXXFLAGS = -Wall -std=c++11
+CXXFLAGS = -Wall -std=c++11 -I/usr/local/include
+LDFLAGS = -L/opt/homebrew/Cellar/sfml/2.5.1_2/lib -lsfml-graphics -lsfml-window -lsfml-system
 
 all: projet
 
 projet: coord.o grille.o projet.o
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+
 test: grille.o coord.o test.o
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
 

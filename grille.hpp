@@ -15,6 +15,7 @@ struct Term{
     int sablier =0;
 	bool brindille = false;
 	bool tourneSurPlace;
+	int nid;
 	Term(){
 		idT=-1;
 	}
@@ -44,9 +45,11 @@ public:
 	void setTermDir(Coord c, Direction d);
 	void setTermTSP(Coord c, bool TSP);
 	void setTermSablier(Coord c, int sablier);
-	bool contientBrindille(Coord c) const;
-	int numéroTermite(Coord c) const;
-	Direction dirTermite(Coord c) const;
+	void setTermNid(Coord c, int n_nid);
+	bool getBrindille(Coord c) const;
+	int getNumTermite(Coord c) const;
+	Direction getDirTermite(Coord c) const;
+	int getNidTermite(Coord c) const;
 	bool estVide(Coord c) const;
     Coord trouveTermite(int idT) const;
 	Term termID(Coord c) const;

@@ -22,17 +22,13 @@ void Grille::poseBrindille(Coord c){
 }
 
 void Grille::enleveBrindille(Coord c){
-	if (!contientBrindille(c)){
+	if (!getBrindille(c)){
 		throw runtime_error("Case ne contient pas de brindille");
 	}
 	Case b;
 	b.brindille = false;
 	b.term.idT = -1;
 	grille[c.getLig()][c.getCol()] = b;
-}
-
-bool Grille::contientBrindille(Coord c) const{
-	return grille[c.getLig()][c.getCol()].brindille;
 }
 
 void Grille::poseTermite(Coord c, int idT, Direction dir){
@@ -80,38 +76,6 @@ void Grille::deplaceTermite(Coord c){
 	grille[c.getLig()][c.getCol()] = old;
 }
 
-int Grille::numéroTermite(Coord c) const{
-	return grille[c.getLig()][c.getCol()].term.idT;
-}
-
-Direction Grille::dirTermite(Coord c) const{
-	return grille[c.getLig()][c.getCol()].term.dir;
-}
-
-bool Grille::estVide(Coord c) const{
-	return !grille[c.getLig()][c.getCol()].brindille && (grille[c.getLig()][c.getCol()].term.idT == -1);
-}
-
-Coord Grille::trouveTermite(int idT) const{
-	for (int i = 0; i < tailleGrille; i++)
-	{
-		for (int j = 0; j < tailleGrille; j++)
-		{
-			if(!estVide({i,j}) && !contientBrindille({i,j})){
-				if(idT == numéroTermite({i,j})){
-					return {i,j};
-				}
-			}
-		}
-		
-	}
-	throw runtime_error("Termite not found");
-}
-
-Term Grille::termID(Coord c) const{
-	return grille[c.getLig()][c.getCol()].term;
-}
-
 void Grille::setTermBrindille(Coord c,bool b){
 	Term temp = grille[c.getLig()][c.getCol()].term;
 	temp.brindille = b;
@@ -124,16 +88,62 @@ void Grille::setTermDir(Coord c, Direction d){
 	grille[c.getLig()][c.getCol()].term = temp;
 }
 
+void Grille::setTermTSP(Coord c, bool TSP){
+	Term temp = grille[c.getLig()][c.getCol()].term;
+	temp.tourneSurPlace = TSP;
+	grille[c.getLig()][c.getCol()].term = temp;
+}
+
 void Grille::setTermSablier(Coord c, int sablier){
 	Term temp = grille[c.getLig()][c.getCol()].term;
 	temp.sablier = sablier;
 	grille[c.getLig()][c.getCol()].term = temp;
 }
 
-void Grille::setTermTSP(Coord c, bool TSP){
+void Grille::setTermNid(Coord c, int n_nid){
 	Term temp = grille[c.getLig()][c.getCol()].term;
-	temp.tourneSurPlace = TSP;
+	temp.nid = n_nid;
 	grille[c.getLig()][c.getCol()].term = temp;
+}
+
+bool Grille::getBrindille(Coord c) const{
+	return grille[c.getLig()][c.getCol()].brindille;
+}
+
+int Grille::getNumTermite(Coord c) const{
+	return grille[c.getLig()][c.getCol()].term.idT;
+}
+
+Direction Grille::getDirTermite(Coord c) const{
+	return grille[c.getLig()][c.getCol()].term.dir;
+}
+
+int Grille::getNidTermite(Coord c) const{
+	return grille[c.getLig()][c.getCol()].term.nid;
+}
+
+bool Grille::estVide(Coord c) const{
+	return !grille[c.getLig()][c.getCol()].brindille && (grille[c.getLig()][c.getCol()].term.idT == -1);
+}
+
+Coord Grille::trouveTermite(int idT) const{
+	for (int i = 0; i < tailleGrille; i++)
+	{
+		for (int j = 0; j < tailleGrille; j++)
+		{
+			if(!estVide({i,j}) && !getBrindille({i,j})){
+				if(idT == getNumTermite({i,j})){
+					return {i,j};
+				}
+			}
+		}
+		
+	}
+	throw runtime_error("Termite not found");
+}
+
+Term Grille::termID(Coord c) const{
+	return grille[c.getLig()][c.getCol()].term;
 }
 
 int Grille::voisinsLibre(Coord c) const{
@@ -158,10 +168,10 @@ ostream& operator<<(ostream& os, Grille g){
         for (int j = 0; j < tailleGrille; j++) {
             if (g.estVide(Coord(i,j))) {
                 os << " ";
-            } else if (g.contientBrindille(Coord(i,j))) {
+            } else if (g.getBrindille(Coord(i,j))) {
                 os << "*";
             } else {
-				switch (g.dirTermite({i,j}))
+				switch (g.getDirTermite({i,j}))
 				{
 				case N:case S: os << "|";
 					break;

@@ -3,13 +3,15 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
 
 
 using namespace std;
 
 const float probaTourner = 0.1;
 const int dureeSablier = 6;
-const float densiteBrindille=0.10;
+const float densiteBrindille=0.1;
 const int nbTermites=20;
 int nbPasse =1;
 
@@ -56,6 +58,7 @@ void randTMouv(Grille &g, vector<Term> &term){
 }
 
 void chargerBrindille(Grille &g, Term &term){
+
     try{
         g.enleveBrindille(devantCoord(g.trouveTermite(term.idT),term.dir));
         term.brindille = true;
@@ -64,6 +67,7 @@ void chargerBrindille(Grille &g, Term &term){
         g.setTermSablier(g.trouveTermite(term.idT), dureeSablier);
     }catch(runtime_error){};
 }
+
 void dechargerBrindille(Grille &g, Term &term){
     try{
     if(term.brindille && term.sablier <=0){
@@ -96,13 +100,13 @@ void rassemblerBrindille(Grille &g, vector<Term> &term){
                 term[i].sablier--;
                 g.setTermSablier(oldC,term[i].sablier);
             }else{
-                if((term[i].sablier >0 || (term[i].sablier <=0 && !g.contientBrindille(nouv)))){
+                if((term[i].sablier >0 || (term[i].sablier <=0 && !g.getBrindille(nouv)))){
                     Direction d = generateRandomDirection();
                     g.setTermDir(oldC,d);
                     term[i].dir = d;
                     g.setTermTSP(oldC,true);
                     term[i].tourneSurPlace = true;
-                }else if(term[i].sablier <=0 && g.contientBrindille(nouv) && term[i].brindille){
+                }else if(term[i].sablier <=0 && g.getBrindille(nouv) && term[i].brindille){
                         if (g.voisinsLibre(oldC) <=1){
                             g.setTermDir(oldC,opposer(term[i].dir));
                             term[i].dir = opposer(term[i].dir);
@@ -113,7 +117,7 @@ void rassemblerBrindille(Grille &g, vector<Term> &term){
                             dechargerBrindille(g,term[i]);
                         }
                     
-                }else if(term[i].sablier <=0 && g.contientBrindille(nouv) && !term[i].brindille){
+                }else if(term[i].sablier <=0 && g.getBrindille(nouv) && !term[i].brindille){
                    chargerBrindille(g,term[i]);
                 }
             }
@@ -129,38 +133,6 @@ void rassemblerBrindille(Grille &g, vector<Term> &term){
         }
         
     }
-
-
-
-// void rassemblerBrindille(Grille &g,vector<Term> &termites){
-//     for (int i = 0; i < nbTermites; i++)
-//     {   
-//         Term &term= termites[i];
-//         Coord cT = g.trouveTermite(i);
-//         Direction dT = g.dirTermite(cT);
-//         try{
-//         Coord dC = devantCoord(cT,dT);
-//         if(g.contientBrindille(dC)){
-//             if (term.sablier <= 0)
-//             {
-//                 if (!term.brindille)
-//                 {
-//                     chargerBrindille(g,term);
-//                     g.enleveBrindille(dC);
-//                 }else
-//                 {
-//                     term.dir = aGauche(term.dir);
-//                     g.setTermDir(cT,term.dir);
-//                     dechargerBrindille(g,term);
-//                 }
-                
-//             }
-            
-//         }
-//         }catch(runtime_error){};
-//     }
-    
-// }
 
 Grille grilleJeu(vector<Term> &termites){
     Grille sim;
@@ -194,20 +166,78 @@ Grille grilleJeu(vector<Term> &termites){
     return sim;
 }
 
-void jeu(vector<Term> termites, Grille sim, int &nbPasse){
-    char user = getchar();
+
+void affGraphique(Grille &g){
+    sf::RenderWindow window(sf::VideoMode(1400, 1400), "Termite Colony Simulation");
+    sf::Texture termiteTexture;
+
+    sf::Texture brindilleTexture;
+
+    if (!termiteTexture.loadFromFile("media/termite.png")) {
+        cout << "Failed to load termite texture" << endl;
+    }
+
+    if (!brindilleTexture.loadFromFile("media/brindille.png")) {
+        cout << "Failed to load brindille texture" << endl;
+    }
     
-    while(user != '.')
-    {
-        cout << "Le nombre d'itérations par passe est " << nbPasse << endl;
-        for (int i =0 ; i < nbPasse; i++)
-        {   
-            // randTMouv(sim,termites);
-            rassemblerBrindille(sim,termites);
-            // testAlgo(sim,termites);
+    sf::Sprite termiteSprite(termiteTexture);
+	termiteSprite.setScale(sf::Vector2f(30.0 / termiteTexture.getSize().x, 60.0 / termiteTexture.getSize().y));
+    sf::Sprite brindilleSprite(brindilleTexture);
+	brindilleSprite.setScale(sf::Vector2f(30.0 / brindilleTexture.getSize().x, 30.0 / brindilleTexture.getSize().y));
+
+    while(window.isOpen()){
+
+            sf::Event event;
+            while (window.pollEvent(event))
+            {
+                if (event.type == sf::Event::Closed)
+                    window.close();
+            }
+            window.clear(sf::Color(128, 128, 128, 255)); // 255 is the alpha value
+
+            sf::RectangleShape square(sf::Vector2f(1325.f, 1325.f));
+            square.setFillColor(sf::Color::White);
+            square.setPosition((window.getSize().x - square.getSize().x) / 2, (window.getSize().y - square.getSize().y) / 2);
+            window.draw(square);
+
+            for (int i = 0; i < tailleGrille; i++) {
+                for (int j = 0; j < tailleGrille; j++) {
+                    if (g.getNumTermite({i,j}) != -1) {
+                        termiteSprite.setPosition(j*60 +125, i*60 + 125);
+                        switch (g.getDirTermite({i,j}))
+                        {
+                        case N: break;
+                        case NE: termiteSprite.setRotation(45);break;
+                        case E: termiteSprite.setRotation(90);break;
+                        case SE: termiteSprite.setRotation(135);break;
+                        case S: termiteSprite.setRotation(180);break;
+                        case SO: termiteSprite.setRotation(225);break;
+                        case O: termiteSprite.setRotation(270);break;
+                        case NO: termiteSprite.setRotation(315);break;
+                        default: break;
+                        }
+                        window.draw(termiteSprite);
+                        termiteSprite.setRotation(0);
+                        if(g.termID({i,j}).brindille){
+                            brindilleSprite.setPosition(j*60 +125, i*60 +125);
+                            window.draw(brindilleSprite);
+                        }
+                    } else if (g.getBrindille({i,j})) {
+                        brindilleSprite.setPosition(j*60 + 125, i*60+ 125);
+                        window.draw(brindilleSprite);
+                    }
+                }
         }
+
+            window.display();
+            break;
+    }
+
+}
+
+void jeu(vector<Term> termites, Grille sim, int &nbPasse){
         // cout << termites << endl;
-        cout << sim << endl;
     //     cout << "Coordonnees des brindilles: " << endl; 
 
     //     for (int i = 0; i < 20; i++)
@@ -222,7 +252,18 @@ void jeu(vector<Term> termites, Grille sim, int &nbPasse){
     // }   
     // cout << endl;
 
-
+    char user = getchar();
+    
+    while(user != '.')
+    {
+        cout << "Le nombre d'itérations par passe est " << nbPasse << endl;
+        for (int i =0 ; i < nbPasse; i++)
+        {   
+            // randTMouv(sim,termites);
+            rassemblerBrindille(sim,termites);
+        }
+        cout << sim << endl;
+        affGraphique(sim);
         if (user == '*')
         {
             nbPasse *=2;
@@ -247,12 +288,12 @@ void jeu(vector<Term> termites, Grille sim, int &nbPasse){
     }
 }
 
+
 int main() {
     srand(time(nullptr));  
-    
+
+    {//test
     // Grille test;
-    Grille sim;
-    vector<Term> termites;
     // vector<Term> termites;
     // test.poseBrindille({0,0});
     // test.poseBrindille({0,1});
@@ -279,16 +320,20 @@ int main() {
     // cout << test.estVide({0,0}) << endl;
     // cout << test.estVide({1,0}) << endl;
     // cout << test.estVide({1,1}) << endl;
-   
+    }
+    
+    Grille sim;
+    vector<Term> termites;
 
     sim = grilleJeu(termites);
 
 
     // cout << termites << endl;
-    cout << sim << endl;
     // cout << test.voisinsLibre({1,1}) << endl;
     // cout << test.voisinsLibre({1,3}) << endl;
     // cout << test.voisinsLibre({0,3}) << endl;
+    cout << sim << endl;
+    
     jeu(termites,sim,nbPasse);
 
     return 0;
